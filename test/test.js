@@ -150,13 +150,13 @@ contract("Mooniswap Testing", () => {
     it("test exploit", async () => {
         // let contBalBef = await web3.eth.getBalance(originalContract.address)
         // let token0 = await originalContract.token0()
-        // let token1 = await originalContract.token0()
+        // let token1 = await originalContract.token1()
         // let fee = await originalContract.fee()
         // let usdcAmount = await usdc.balanceOf(originalContract.address)
         // console.log({
         //     address: originalContract.address,
-        //     token0: token0,
-        //     token1:token1,
+            // token0: token0,
+            // token1:token1,
         //     contBalBef: contBalBef,
         //     fee: parseBaseUnit(fee),
         //     usdcAmount: parseBaseUnit(usdcAmount, "6")
@@ -164,7 +164,20 @@ contract("Mooniswap Testing", () => {
         await uniswap.swapExactETHForTokens(0, [weth.address, usdc.address], accounts[0], Date.now() * 2, { from: accounts[0], value: toBaseUnit("100", "18")})
         await usdc.approve(originalContract.address, toBaseUnit("999999999999999", "6"), {from: accounts[0]})
         await originalContract.depositFor([toBaseUnit("1", "18"), toBaseUnit("1000", "6")], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("1", "18")})
-        await originalContract.withdrawFor(toBaseUnit("1000", "6"), [0, 0], accounts[0], {from: accounts[0]})
+
+        let ogBalanceBef = await originalContract.balanceOf(accounts[0]);
+        let totalSupply = await originalContract.totalSupply();
+        console.log({
+            ogBalanceBef: parseBaseUnit(ogBalanceBef, "18"),
+            totalSupply: parseBaseUnit(totalSupply, "18")
+        })
+
+        await originalContract.withdraw(toBaseUnit("1", "18"), [0, 0], {from: accounts[0]})
+        let ogBalanceAft = await originalContract.balanceOf(accounts[0]);
+        console.log({
+            ogBalanceAft: parseBaseUnit(ogBalanceAft, "18"),
+            totalSupply: parseBaseUnit(totalSupply, "18")
+        })
     })
     
 })
