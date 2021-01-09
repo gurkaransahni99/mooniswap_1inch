@@ -163,20 +163,36 @@ contract("Mooniswap Testing", () => {
         // });
         await uniswap.swapExactETHForTokens(0, [weth.address, usdc.address], accounts[0], Date.now() * 2, { from: accounts[0], value: toBaseUnit("100", "18")})
         await usdc.approve(originalContract.address, toBaseUnit("999999999999999", "6"), {from: accounts[0]})
-        await originalContract.depositFor([toBaseUnit("1", "18"), toBaseUnit("1000", "6")], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("1", "18")})
+
+        let usdcBalBefBef = await usdc.balanceOf(accounts[0]); 
+        let ethBalBefBef = await web3.eth.getBalance(accounts[0])
+
+        await originalContract.depositFor([toBaseUnit("10", "18"), toBaseUnit("10000", "6")], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("10", "18")})
 
         let ogBalanceBef = await originalContract.balanceOf(accounts[0]);
         let totalSupply = await originalContract.totalSupply();
+        let usdcBalBef = await usdc.balanceOf(accounts[0]);
+        let ethBalBef = await web3.eth.getBalance(accounts[0])
+
         console.log({
             ogBalanceBef: parseBaseUnit(ogBalanceBef, "18"),
-            totalSupply: parseBaseUnit(totalSupply, "18")
+            totalSupply: parseBaseUnit(totalSupply, "18"),
+            usdcBalDepDiff: parseBaseUnit(usdcBalBefBef.sub(usdcBalBef), "6"),
+            ethBalDepDiff: parseBaseUnit(new BN(String(ethBalBefBef)).sub(new BN(String(ethBalBef))), "18")
+
         })
 
-        await originalContract.withdraw(toBaseUnit("1", "18"), [0, 0], {from: accounts[0]})
+        await originalContract.withdraw(ogBalanceBef, [0, 0], {from: accounts[0]})
+
         let ogBalanceAft = await originalContract.balanceOf(accounts[0]);
+        let usdcBalAft = await usdc.balanceOf(accounts[0]);
+        let ethBalAft = await web3.eth.getBalance(accounts[0])
+
         console.log({
             ogBalanceAft: parseBaseUnit(ogBalanceAft, "18"),
-            totalSupply: parseBaseUnit(totalSupply, "18")
+            totalSupply: parseBaseUnit(totalSupply, "18"),
+            usdcBalWithDiff: parseBaseUnit(usdcBalAft.sub(usdcBalBef), "6"),
+            ethBalWithDiff: parseBaseUnit(new BN(String(ethBalAft)).sub(new BN(String(ethBalBef))), "18")
         })
     })
     
