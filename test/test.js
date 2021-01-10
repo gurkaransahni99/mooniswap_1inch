@@ -152,7 +152,7 @@ contract("Mooniswap Testing", () => {
         // let token0 = await originalContract.token0()
         // let token1 = await originalContract.token1()
         // let fee = await originalContract.fee()
-        // let usdcAmount = await usdc.balanceOf(originalContract.address)
+        let usdcAmount = await usdc.balanceOf(originalContract.address)
         // console.log({
         //     address: originalContract.address,
             // token0: token0,
@@ -161,14 +161,15 @@ contract("Mooniswap Testing", () => {
         //     fee: parseBaseUnit(fee),
         //     usdcAmount: parseBaseUnit(usdcAmount, "6")
         // });
-        await uniswap.swapExactETHForTokens(0, [weth.address, usdc.address], accounts[0], Date.now() * 2, { from: accounts[0], value: toBaseUnit("100", "18")})
+        await uniswap.swapExactETHForTokens(0, [weth.address, usdc.address], accounts[0], Date.now() * 2, { from: accounts[0], value: toBaseUnit("1000", "18")})
         await usdc.approve(originalContract.address, toBaseUnit("999999999999999", "6"), {from: accounts[0]})
 
         let usdcBalBefBef = await usdc.balanceOf(accounts[0]); 
         let ethBalBefBef = await web3.eth.getBalance(accounts[0])
         let count =0;
         while(true){
-            await originalContract.depositFor([toBaseUnit("10", "18"), toBaseUnit("10000", "6")], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("10", "18")})
+            // await originalContract.depositFor([toBaseUnit("1", "18"), toBaseUnit("1", "6")], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("1", "18")})
+            await originalContract.depositFor([toBaseUnit("27000", "18"), usdcAmount], [0, 0], accounts[0], {from: accounts[0], value:toBaseUnit("27000", "18")})
 
             let ogBalanceBef = await originalContract.balanceOf(accounts[0]);
             // let totalSupply = await originalContract.totalSupply();
